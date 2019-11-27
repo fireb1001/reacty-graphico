@@ -6,6 +6,7 @@ import Home from "./views/Home";
 import Header from "./components/layouts/Header";
 import Footer from "./components/layouts/Footer";
 import Box from "@material-ui/core/Box";
+import Sites from "./views/Sites";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Header />
         <Route exact path="/" component={Home} />
         <Route path="/demo" component={Demo} />
+        <Route path="/sites" component={Sites} />
         <Footer />
       </Router>
     </Box>

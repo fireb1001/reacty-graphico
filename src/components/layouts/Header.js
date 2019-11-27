@@ -45,6 +45,15 @@ export default function Header(props) {
           >
             Home
           </Typography>
+          <Typography
+            variant="h6"
+            color="inherit"
+            className={classes.title}
+            component={Link}
+            to={"/sites"}
+          >
+            Sites
+          </Typography>
           <Button color="inherit">Login</Button>
           <Button color="inherit" component={Link} to={"/demo"}>
             Demo
