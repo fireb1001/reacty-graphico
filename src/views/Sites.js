@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { GET_SITES } from "../graphql/sites";
-import { Paper, Typography } from "@material-ui/core";
+import { Paper, Typography, Avatar, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AddSiteModal from "../components/AddSiteModal";
 
@@ -9,6 +9,10 @@ const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3, 2),
     margin: "1em"
+  },
+  bigAvatar: {
+    width: 60,
+    height: 60
   }
 }));
 
@@ -16,7 +20,16 @@ const SingleSite = ({ site }) => {
   const classes = useStyles();
   return (
     <Paper className={classes.root}>
-      <Typography>{JSON.stringify(site)}</Typography>
+      <Grid container spacing={2}>
+        <Grid item xs>
+          <Avatar
+            alt="Remy Sharp"
+            src={site.logoUrl}
+            className={classes.bigAvatar}
+          />
+        </Grid>
+        <Typography>{JSON.stringify(site)}</Typography>
+      </Grid>
     </Paper>
   );
 };
