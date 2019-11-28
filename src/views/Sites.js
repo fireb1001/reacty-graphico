@@ -3,6 +3,7 @@ import { useQuery } from "@apollo/react-hooks";
 import { GET_SITES } from "../graphql/sites";
 import { Paper, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import AddSiteModal from "../components/AddSiteModal";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,7 +22,6 @@ const SingleSite = ({ site }) => {
 };
 export default function Sites() {
   const { loading, error, data, refetch } = useQuery(GET_SITES);
-
   React.useEffect(() => {
     refetch();
   });
@@ -33,6 +33,7 @@ export default function Sites() {
     <>
       {data.sites &&
         data.sites.map(site => <SingleSite site={site} key={site.id} />)}
+      <AddSiteModal />
     </>
   );
 }
