@@ -8,7 +8,10 @@ import LocationOnIcon from "@material-ui/icons/LocationOn";
 import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles({
-  root: { bottom: 0, position: "fixed" }
+  root: {
+    bottom: 0,
+    position: "fixed"
+  }
 });
 
 export default function SimpleBottomNavigation() {

@@ -26,7 +26,8 @@ const ACTION_TYPES = {
   CHANGE_SITE: "CHANGE_SITE",
   TOGGLE_SHOW_ARCHIVED: "TOGGLE_SHOW_ARCHIVED",
   TOGGLE_SHOW_MEDIA_MODAL: "TOGGLE_SHOW_MEDIA_MODAL",
-  SUGGEST_ACTION: "SUGGEST_ACTION"
+  SUGGEST_ACTION: "SUGGEST_ACTION",
+  UPDATESITE_ACTION: "UPDATESITE_ACTION"
 };
 
 const initialState = {
@@ -37,6 +38,8 @@ const initialState = {
   site: {},
   image_data: { src: "", alt: "", caption: "" },
   setSite: site => {},
+  will_update_site: { id: "", name: "", url: "", logoUrl: "" },
+  updateSite: site => {},
   suggest_kw: { keyword: "" },
   suggestFn: payload => {}
 };
@@ -60,6 +63,11 @@ function appReducer(state, action) {
       return {
         ...state,
         suggest_kw: action.payload
+      };
+    case ACTION_TYPES.UPDATESITE_ACTION:
+      return {
+        ...state,
+        will_update_site: action.site
       };
     case ACTION_TYPES.CHANGE_SITE:
       let site = {
@@ -96,6 +104,10 @@ function CtxtProvider(props) {
     dispatch({ site: site, type: ACTION_TYPES.CHANGE_SITE });
   }
 
+  function updateSite(site) {
+    dispatch({ site: site, type: ACTION_TYPES.UPDATESITE_ACTION });
+  }
+
   function suggestFn(payload) {
     dispatch({ payload: payload, type: ACTION_TYPES.SUGGEST_ACTION });
   }
@@ -116,6 +128,8 @@ function CtxtProvider(props) {
         toggleShowMediaModal,
         toggleShowState,
         site: state.site,
+        will_update_site: state.will_update_site,
+        updateSite,
         setSite,
         suggest_kw: state.suggest_kw,
         suggestFn

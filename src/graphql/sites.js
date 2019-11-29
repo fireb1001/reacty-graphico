@@ -18,3 +18,14 @@ export const CREATE_SITE = gql`
     }
   }
 `;
+
+export const UPDATE_SITE = gql`
+  mutation updateSite($id: ID!, $name: String, $url: String, $logoUrl: String) {
+    updateSite(id: $id, name: $name, url: $url, logoUrl: $logoUrl) {
+      id
+      name
+      url
+      logoUrl
+    }
+  }
+`;
