@@ -46,6 +46,7 @@ const SingleSite = ({ site, onUpdateSite }) => {
     </Paper>
   );
 };
+
 export default function Sites() {
   const { loading, error, data, refetch } = useQuery(GET_SITES);
   React.useEffect(() => {
