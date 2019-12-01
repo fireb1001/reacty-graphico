@@ -7,8 +7,23 @@ import Header from "./components/layouts/Header";
 import Footer from "./components/layouts/Footer";
 import Box from "@material-ui/core/Box";
 import Sites from "./views/Sites";
+import { AppCtxt } from "./Context";
+import { callClient } from "./MyApolloProvider";
+import { GET_TAGS } from "./graphql/tags";
 
 function App() {
+  const { tags, setTags } = React.useContext(AppCtxt);
+
+  React.useEffect(() => {
+    async function getTags() {
+      let data = await callClient(GET_TAGS);
+      setTags(data.tags);
+    }
+    if (tags.length === 0) {
+      getTags();
+    }
+  }, [tags, setTags]);
+
   return (
     <Box height="100%">
       <Router>

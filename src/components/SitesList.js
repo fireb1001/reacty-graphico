@@ -10,6 +10,7 @@ import {
   TextField
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { AppCtxt } from "../Context";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,6 +29,8 @@ export default function SitesList() {
   const { loading, error, data, refetch } = useQuery(GET_SITES);
   const [filteredSites, setFilteredSites] = React.useState([]);
   const [siteFilter, setSiteFilter] = React.useState("");
+
+  const { setDashboardSite } = React.useContext(AppCtxt);
 
   React.useEffect(() => {
     refetch();
@@ -61,7 +64,12 @@ export default function SitesList() {
       <List className={classes.root}>
         {filteredSites &&
           filteredSites.map(site => (
-            <ListItem key={site.id}>
+            <ListItem
+              key={site.id}
+              onClick={() => {
+                setDashboardSite(site);
+              }}
+            >
               <ListItemAvatar>
                 <Avatar
                   className={classes.avatar}

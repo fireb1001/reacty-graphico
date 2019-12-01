@@ -1,33 +1,13 @@
 import React, { useReducer } from "react";
-/*
-interface Action {}
 
-class ChangeSite implements Action {
-  type: "CHANGE_SITE" = "CHANGE_SITE";
-  payload!: Site;
-}
-
-class ToggleShowArchived implements Action {
-  type: "TOGGLE_SHOW_ARCHIVED" = "TOGGLE_SHOW_ARCHIVED";
-  flag!: boolean;
-}
-
-class ToggleShowMediaModal implements Action {
-  type: "TOGGLE_SHOW_MEDIA_MODAL" = "TOGGLE_SHOW_MEDIA_MODAL";
-  payload!: any;
-}
-
-class SuggestAction implements Action {
-  type: "SUGGEST_ACTION" = "SUGGEST_ACTION";
-  payload!: any;
-}
-*/
 const ACTION_TYPES = {
   CHANGE_SITE: "CHANGE_SITE",
   TOGGLE_SHOW_ARCHIVED: "TOGGLE_SHOW_ARCHIVED",
   TOGGLE_SHOW_MEDIA_MODAL: "TOGGLE_SHOW_MEDIA_MODAL",
   SUGGEST_ACTION: "SUGGEST_ACTION",
-  UPDATESITE_ACTION: "UPDATESITE_ACTION"
+  UPDATESITE_ACTION: "UPDATESITE_ACTION",
+  SET_DASHBOARD_SITE: "SET_DASHBOARD_SITE",
+  SET_TAGS: "SET_TAGS"
 };
 
 const initialState = {
@@ -36,11 +16,15 @@ const initialState = {
   toggleShowMediaModal: payload => {},
   toggleShowState: flag => {},
   site: {},
+  dashboard_site: {},
   image_data: { src: "", alt: "", caption: "" },
   setSite: site => {},
+  setDashboardSite: site => {},
   will_update_site: { id: "", name: "", url: "", logoUrl: "" },
   updateSite: site => {},
   suggest_kw: { keyword: "" },
+  tags: [],
+  setTags: tags => {},
   suggestFn: payload => {}
 };
 
@@ -64,10 +48,20 @@ function appReducer(state, action) {
         ...state,
         suggest_kw: action.payload
       };
+    case ACTION_TYPES.SET_TAGS:
+      return {
+        ...state,
+        tags: action.tags
+      };
     case ACTION_TYPES.UPDATESITE_ACTION:
       return {
         ...state,
         will_update_site: action.site
+      };
+    case ACTION_TYPES.SET_DASHBOARD_SITE:
+      return {
+        ...state,
+        dashboard_site: action.site
       };
     case ACTION_TYPES.CHANGE_SITE:
       let site = {
@@ -104,12 +98,20 @@ function CtxtProvider(props) {
     dispatch({ site: site, type: ACTION_TYPES.CHANGE_SITE });
   }
 
+  function setDashboardSite(site) {
+    dispatch({ site: site, type: ACTION_TYPES.SET_DASHBOARD_SITE });
+  }
+
   function updateSite(site) {
     dispatch({ site: site, type: ACTION_TYPES.UPDATESITE_ACTION });
   }
 
   function suggestFn(payload) {
     dispatch({ payload: payload, type: ACTION_TYPES.SUGGEST_ACTION });
+  }
+
+  function setTags(tags) {
+    dispatch({ tags: tags, type: ACTION_TYPES.SET_TAGS });
   }
   /*
   React.useMemo(() => {
@@ -129,10 +131,14 @@ function CtxtProvider(props) {
         toggleShowState,
         site: state.site,
         will_update_site: state.will_update_site,
+        dashboard_site: state.dashboard_site,
+        setDashboardSite,
         updateSite,
         setSite,
         suggest_kw: state.suggest_kw,
-        suggestFn
+        suggestFn,
+        tags: state.tags,
+        setTags
       }}
       {...props}
     />
