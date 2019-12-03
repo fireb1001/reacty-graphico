@@ -9,3 +9,13 @@ export const GET_TAGS = gql`
     }
   }
 `;
+
+export const CREATE_TAG = gql`
+  mutation createTag($hashtag: String!, $notes: String) {
+    createTag(hashtag: $hashtag, notes: $notes) {
+      id
+      hashtag
+      notes
+    }
+  }
+`;

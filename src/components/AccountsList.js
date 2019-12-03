@@ -2,7 +2,11 @@ import React from "react";
 import { AppCtxt } from "../Context";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { Paper, Box, Fab, Avatar } from "@material-ui/core";
-import { GET_ACCOUNTS, CREATE_ACCOUNT } from "./../graphql/accounts";
+import {
+  GET_ACCOUNTS,
+  CREATE_ACCOUNT,
+  UPDATE_ACCOUNT
+} from "./../graphql/accounts";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -13,6 +17,101 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import Typography from "@material-ui/core/Typography";
+import { callClient } from "../MyApolloProvider";
+import { CREATE_TAG } from "../graphql/tags";
+
+const AccountPaper = ({ account }) => {
+  const { tags_arr } = React.useContext(AppCtxt);
+  const [accountTagInp, setAccountTagInp] = React.useState("");
+
+  const [updateAccount] = useMutation(UPDATE_ACCOUNT, {
+    refetchQueries: [{ query: GET_ACCOUNTS }]
+  });
+
+  return (
+    <Paper style={{ padding: ".5em" }}>
+      {JSON.stringify(account)}
+      <hr />
+      <TextField
+        id="hashtag"
+        label="Hashtag"
+        type="text"
+        value={accountTagInp}
+        className={tags_arr[accountTagInp] ? "found-tag" : ""}
+        onChange={e => {
+          let val = e.target.value;
+          if (tags_arr[val]) console.log(`hashtag ${val} found`);
+          setAccountTagInp(val);
+          if (e.keyCode === 13) console.log(val);
+        }}
+        onKeyPress={async e => {
+          if (e.key === "Enter") {
+            // get all ids
+            let acc_tags_ids = account.tags.map(acc_tag => {
+              return acc_tag.id;
+            });
+
+            if (tags_arr[accountTagInp]) {
+              // add id if unique
+              if (acc_tags_ids.indexOf(tags_arr[accountTagInp]) === -1) {
+                acc_tags_ids.push(tags_arr[accountTagInp]);
+              }
+            } else {
+              // create tag and use it id
+              let data = await callClient(
+                CREATE_TAG,
+                {
+                  hashtag: accountTagInp
+                },
+                true
+              );
+              if (data.createTag && data.createTag.id) {
+                acc_tags_ids.push(data.createTag.id);
+              }
+            }
+
+            updateAccount({
+              variables: {
+                id: account.id,
+                tags: acc_tags_ids
+              }
+            });
+
+            setAccountTagInp("");
+          }
+        }}
+      />
+      {account.tags &&
+        account.tags.map(tag => (
+          <span key={tag.hashtag}>
+            <span>{tag.hashtag}</span>
+            <Typography
+              color="error"
+              variant="caption"
+              onClick={e => {
+                let acc_tags_ids = account.tags.map(acc_tag => {
+                  if (acc_tag.id === tag.id) return null;
+                  return acc_tag.id;
+                });
+                // remove null values
+                acc_tags_ids = acc_tags_ids.filter(e => e);
+
+                updateAccount({
+                  variables: {
+                    id: account.id,
+                    tags: acc_tags_ids
+                  }
+                });
+              }}
+            >
+              {" ✖ "}
+            </Typography>
+          </span>
+        ))}
+    </Paper>
+  );
+};
 
 export default function AccountsList() {
   const { dashboard_site, tags } = React.useContext(AppCtxt);
@@ -157,7 +256,7 @@ export default function AccountsList() {
       {filteredAccounts &&
         filteredAccounts.map(account => (
           <Box m={1.5} key={account.id}>
-            <Paper style={{ padding: ".5em" }}>{JSON.stringify(account)}</Paper>
+            <AccountPaper account={account} />
           </Box>
         ))}
     </div>

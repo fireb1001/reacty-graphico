@@ -24,6 +24,7 @@ const initialState = {
   updateSite: site => {},
   suggest_kw: { keyword: "" },
   tags: [],
+  tags_arr: [],
   setTags: tags => {},
   suggestFn: payload => {}
 };
@@ -49,8 +50,11 @@ function appReducer(state, action) {
         suggest_kw: action.payload
       };
     case ACTION_TYPES.SET_TAGS:
+      let tags_arr = [];
+      action.tags.forEach(tag => (tags_arr[tag.hashtag] = tag.id));
       return {
         ...state,
+        tags_arr: tags_arr,
         tags: action.tags
       };
     case ACTION_TYPES.UPDATESITE_ACTION:
@@ -138,6 +142,7 @@ function CtxtProvider(props) {
         suggest_kw: state.suggest_kw,
         suggestFn,
         tags: state.tags,
+        tags_arr: state.tags_arr,
         setTags
       }}
       {...props}
