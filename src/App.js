@@ -10,6 +10,7 @@ import Sites from "./views/Sites";
 import { AppCtxt } from "./Context";
 import { callClient } from "./MyApolloProvider";
 import { GET_TAGS } from "./graphql/tags";
+import Tools from "./views/Tools";
 
 function App() {
   const { tags, setTags } = React.useContext(AppCtxt);
@@ -31,6 +32,7 @@ function App() {
         <Route exact path="/" component={Home} />
         <Route path="/demo" component={Demo} />
         <Route path="/sites" component={Sites} />
+        <Route path="/tools" component={Tools} />
         <Footer />
       </Router>
     </Box>

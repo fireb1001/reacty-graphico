@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { GET_SITES } from "../graphql/sites";
-import { Paper, Typography, Avatar, Grid } from "@material-ui/core";
+import { Paper, Typography, Avatar, Grid, Box, Fab } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AddSiteModal from "../components/AddSiteModal";
 import { AppCtxt } from "../Context";
@@ -64,6 +64,17 @@ export default function Sites() {
 
   return (
     <>
+      <Box m={1} p={1} style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Fab
+          color="primary"
+          aria-label="add"
+          onClick={_ => {
+            /* nothing for now*/
+          }}
+        >
+          <span style={{ fontSize: "2em" }}> {"➕"} </span>
+        </Fab>
+      </Box>
       {data.sites &&
         data.sites.map(site => (
           <SingleSite site={site} key={site.id} onUpdateSite={onUpdateSite} />

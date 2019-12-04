@@ -259,6 +259,7 @@ export default function AccountsList() {
             <AccountPaper account={account} />
           </Box>
         ))}
+      <div style={{ marginBottom: "60px" }}> </div>
     </div>
   );
 }
