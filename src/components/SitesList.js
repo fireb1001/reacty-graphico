@@ -28,7 +28,7 @@ export default function SitesList() {
   const classes = useStyles();
   const { loading, error, data, refetch } = useQuery(GET_SITES);
   const [filteredSites, setFilteredSites] = React.useState([]);
-  const [siteFilter, setSiteFilter] = React.useState("");
+  const [siteFilterInput, setSiteFilterInput] = React.useState("");
 
   const { setDashboardSite } = React.useContext(AppCtxt);
 
@@ -48,14 +48,13 @@ export default function SitesList() {
       <TextField
         id="site-filter"
         label="Site Filter"
-        value={siteFilter}
+        value={siteFilterInput}
         onChange={e => {
-          let siteFilter = e.target.value;
-          setSiteFilter(siteFilter);
+          let siteFilterText = e.target.value;
+          setSiteFilterInput(siteFilterText);
           let filtered = data.sites.filter(site =>
-            site.name.toLowerCase().includes(siteFilter)
+            site.name.toLowerCase().includes(siteFilterText)
           );
-          console.log(filtered);
           setFilteredSites(filtered);
         }}
         className={classes.textField}

@@ -26,6 +26,14 @@ export const CREATE_ACCOUNT = gql`
   }
 `;
 
+export const DELETE_ACCOUNT = gql`
+  mutation deleteAccount($id: ID!) {
+    deleteAccount(id: $id) {
+      id
+    }
+  }
+`;
+
 export const UPDATE_ACCOUNT = gql`
   mutation updateAccount(
     $id: ID!

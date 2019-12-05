@@ -5,14 +5,13 @@ import { Paper, Box, Fab, Avatar } from "@material-ui/core";
 import {
   GET_ACCOUNTS,
   CREATE_ACCOUNT,
-  UPDATE_ACCOUNT
+  UPDATE_ACCOUNT,
+  DELETE_ACCOUNT
 } from "./../graphql/accounts";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -21,11 +20,30 @@ import Typography from "@material-ui/core/Typography";
 import { callClient } from "../MyApolloProvider";
 import { CREATE_TAG } from "../graphql/tags";
 
+const SafetyButton = ({ confirmed }) => {
+  const [gotConfirm, setGotCofirm] = React.useState(false);
+  return (
+    <Button
+      color="secondary"
+      onClick={_ => {
+        if (gotConfirm) confirmed(true);
+        setGotCofirm(!gotConfirm);
+      }}
+    >
+      {gotConfirm ? "COFIRM !" : "DELETE"}
+    </Button>
+  );
+};
+
 const AccountPaper = ({ account }) => {
   const { tags_arr } = React.useContext(AppCtxt);
   const [accountTagInp, setAccountTagInp] = React.useState("");
 
   const [updateAccount] = useMutation(UPDATE_ACCOUNT, {
+    refetchQueries: [{ query: GET_ACCOUNTS }]
+  });
+
+  const [deleteAccount] = useMutation(DELETE_ACCOUNT, {
     refetchQueries: [{ query: GET_ACCOUNTS }]
   });
 
@@ -109,12 +127,17 @@ const AccountPaper = ({ account }) => {
             </Typography>
           </span>
         ))}
+      <SafetyButton
+        confirmed={ok => {
+          deleteAccount({ variables: { id: account.id } });
+        }}
+      />
     </Paper>
   );
 };
 
 export default function AccountsList() {
-  const { dashboard_site, tags } = React.useContext(AppCtxt);
+  const { dashboard_site, tags, setDashboardSite } = React.useContext(AppCtxt);
   const { loading, error, data, refetch } = useQuery(GET_ACCOUNTS);
 
   const [filteredAccounts, setFilteredAccounts] = React.useState([]);
@@ -169,7 +192,8 @@ export default function AccountsList() {
     setOpen(false);
   };
 
-  const handleAdd = () => {
+  const handleAdd = e => {
+    e.preventDefault();
     let accountData = {
       login: loginRef.current.value,
       passhint: passhintRef.current.value,
@@ -196,43 +220,57 @@ export default function AccountsList() {
       >
         <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <Box m={1}>
             Adding account to {dashboard_site.name}
             <br />
             <Avatar alt="Remy Sharp" src={dashboard_site.logoUrl} />
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="login"
-            inputRef={loginRef}
-            label="Login"
-            type="email"
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            id="passhint"
-            inputRef={passhintRef}
-            label="Pass hint"
-            type="text"
-            fullWidth
-          />
+          </Box>
+          <form onSubmit={handleAdd}>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="login"
+              inputRef={loginRef}
+              label="Login"
+              type="text"
+              fullWidth
+            />
+            <TextField
+              margin="dense"
+              id="passhint"
+              inputRef={passhintRef}
+              label="Pass hint"
+              type="text"
+              fullWidth
+            />
+            <Box m={2}>
+              <Button color="primary" type="submit">
+                Add Account
+              </Button>
+              <Button onClick={handleClose} color="primary">
+                Cancel
+              </Button>
+            </Box>
+          </form>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleAdd} color="primary">
-            Add Account
-          </Button>
-        </DialogActions>
       </Dialog>
       <Box m={1} p={1} style={{ display: "flex", justifyContent: "flex-end" }}>
         <Fab color="primary" aria-label="add" onClick={_ => setOpen(true)}>
           <span style={{ fontSize: "2em" }}> {"➕"} </span>
         </Fab>
       </Box>
+      {dashboard_site.id && (
+        <>
+          {dashboard_site.name}{" "}
+          <span
+            onClick={_ => {
+              setDashboardSite({});
+            }}
+          >
+            ✖
+          </span>
+        </>
+      )}
       <Box m={1} p={1}>
         <FormGroup row>
           {checkTags &&
